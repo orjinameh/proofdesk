@@ -1,0 +1,44 @@
+{
+  "provider": "ProofDesk",
+  "receipt_id": "pd_fail-sample-0000",
+  "timestamp": "2026-07-16T12:00:00.000Z",
+  "target_address": "0x0de4bf8ed54bbd167495522b71b48a7e37b0d933",
+  "chain_id": 1,
+  "verdict": "FAIL",
+  "confidence_score": 0.58,
+  "checks": {
+    "contract_security": {
+      "status": "PASS",
+      "details": [
+        "Contract ownership has been renounced or is held by a null address.",
+        "Source code is verified and matches deployed bytecode."
+      ]
+    },
+    "liquidity": {
+      "status": "PASS",
+      "details": [
+        "Estimated pooled liquidity: $2,268,517.",
+        "Liquidity appears locked for approximately 159 days.",
+        "Estimated slippage on a representative trade size: 2.87%."
+      ]
+    },
+    "reputation": {
+      "status": "PASS",
+      "details": [
+        "Address first observed approximately 437 days ago.",
+        "45,436 historical transactions across 1,998 unique counterparties.",
+        "No matches found against known scam or phishing blocklists."
+      ]
+    },
+    "market_structure": {
+      "status": "FAIL",
+      "details": [
+        "Largest single holder controls approximately 50.8% of circulating supply.",
+        "Transfer tax structure: 6.6% buy / 5.9% sell.",
+        "24h price volatility: 52.5%."
+      ]
+    }
+  },
+  "mode": "mock",
+  "receipt_hash": "36d7c5ddae9dbeefb2eb6062e6d136cf206fad0524dad8c66ad16b0732096a2f"
+}

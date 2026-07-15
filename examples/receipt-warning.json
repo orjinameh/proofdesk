@@ -1,0 +1,44 @@
+{
+  "provider": "ProofDesk",
+  "receipt_id": "pd_warning-sample-0000",
+  "timestamp": "2026-07-16T12:00:00.000Z",
+  "target_address": "0x581624a116f565a62844e24070365372b43527af",
+  "chain_id": 1,
+  "verdict": "WARNING",
+  "confidence_score": 0.44,
+  "checks": {
+    "contract_security": {
+      "status": "WARNING",
+      "details": [
+        "Contract ownership has been renounced or is held by a null address.",
+        "Source code is not verified on the block explorer."
+      ]
+    },
+    "liquidity": {
+      "status": "WARNING",
+      "details": [
+        "Estimated pooled liquidity: $1,699,700.",
+        "No liquidity lock detected; liquidity could be pulled at any time.",
+        "Estimated slippage on a representative trade size: 4.75%."
+      ]
+    },
+    "reputation": {
+      "status": "PASS",
+      "details": [
+        "Address first observed approximately 233 days ago.",
+        "42,692 historical transactions across 379 unique counterparties.",
+        "No matches found against known scam or phishing blocklists."
+      ]
+    },
+    "market_structure": {
+      "status": "WARNING",
+      "details": [
+        "Largest single holder controls approximately 26.5% of circulating supply.",
+        "Transfer tax structure: 11.9% buy / 3.1% sell.",
+        "24h price volatility: 19.8%."
+      ]
+    }
+  },
+  "mode": "mock",
+  "receipt_hash": "41f131d97552f5f8d2ce6cd7b10f57898f9fba363c512ee17dad5b5c186869ed"
+}

@@ -1,0 +1,46 @@
+services:
+  # ProofDesk backend - the Agent Service Provider itself.
+  # This is the only service required for ASP registration.
+  - type: web
+    name: proofdesk-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: MONGODB_URI
+        sync: false
+      - key: RPC_URL
+        sync: false
+      - key: GO_PLUS_API_KEY
+        sync: false
+      - key: DEX_API_KEY
+        sync: false
+      - key: PRIVATE_KEY
+        sync: false
+
+  # Optional demo frontend - not required for ASP registration, only
+  # useful for a human-facing walkthrough during judging.
+  - type: web
+    name: proofdesk-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      # Set this to the deployed proofdesk-backend URL after the backend
+      # service's first deploy (e.g. https://proofdesk-backend.onrender.com).
+      - key: VITE_API_BASE_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

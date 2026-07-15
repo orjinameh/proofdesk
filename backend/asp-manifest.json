@@ -1,0 +1,79 @@
+{
+  "asp_name": "ProofDesk",
+  "service_id": "proofdesk",
+  "version": "1.0.0",
+  "protocol": "A2MCP",
+  "category": "trust-verification",
+  "description": "ProofDesk is an Agent Service Provider that issues machine-readable Verification Receipts for blockchain targets (contracts or wallets) before an autonomous agent executes a financial action against them.",
+  "provider": {
+    "name": "ProofDesk",
+    "contact": "proofdeskasp@gmail.com",
+    "homepage": "REPLACE_WITH_DEPLOYED_URL"
+  },
+  "service": {
+    "base_url": "REPLACE_WITH_DEPLOYED_BACKEND_URL",
+    "health_check": "/health",
+    "rest_endpoint": "/api/v1/verify",
+    "mcp_discovery_endpoint": "/mcp/tools",
+    "mcp_invoke_endpoint": "/mcp/invoke"
+  },
+  "tools": [
+    {
+      "name": "proofdesk_verify_target",
+      "description": "Verify a blockchain target before an autonomous agent executes a financial action. Returns a Verification Receipt with a PASS/FAIL/WARNING verdict, a confidence score, and a breakdown across contract security, liquidity, reputation, and market structure checks.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "target_address": {
+            "type": "string",
+            "description": "EVM-style contract or wallet address to verify (0x-prefixed, 40 hex chars)."
+          },
+          "chain_id": {
+            "type": "number",
+            "description": "EVM chain ID the target lives on (e.g. 1 for Ethereum mainnet)."
+          },
+          "transaction_payload": {
+            "type": "string",
+            "description": "Optional raw or encoded transaction payload the calling agent intends to submit."
+          }
+        },
+        "required": ["target_address", "chain_id"]
+      },
+      "output_schema": {
+        "type": "object",
+        "description": "A ProofDesk Verification Receipt.",
+        "properties": {
+          "provider": { "type": "string", "const": "ProofDesk" },
+          "receipt_id": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "target_address": { "type": "string" },
+          "chain_id": { "type": "number" },
+          "verdict": { "type": "string", "enum": ["PASS", "FAIL", "WARNING"] },
+          "confidence_score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "checks": {
+            "type": "object",
+            "properties": {
+              "contract_security": { "type": "object" },
+              "liquidity": { "type": "object" },
+              "reputation": { "type": "object" },
+              "market_structure": { "type": "object" }
+            }
+          },
+          "receipt_hash": { "type": "string" },
+          "mode": { "type": "string", "enum": ["mock", "live", "mixed"] }
+        }
+      },
+      "cost": {
+        "model": "free-during-hackathon",
+        "notes": "Pricing model TBD post-hackathon; no payment integration in this MVP."
+      },
+      "latency_p50_ms": 250,
+      "auth": "none"
+    }
+  ],
+  "trust_and_safety": {
+    "data_sources": "Verification checks run in MOCK mode by default (deterministic, realistic simulated data) when live provider API keys are not configured. See README for enabling live mode.",
+    "determinism": "Mock results are deterministic per (target_address, chain_id) pair - repeated calls return consistent verdicts, not random noise.",
+    "receipt_integrity": "Every receipt includes a SHA-256 hash over its canonical fields so a receiving agent can detect tampering in transit."
+  }
+}

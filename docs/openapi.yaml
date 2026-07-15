@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: ProofDesk API
+  version: 1.0.0
+  description: >
+    ProofDesk is a trust verification service for autonomous AI agents.
+    Before an agent performs a financial action against a blockchain
+    target, it calls ProofDesk to receive a Verification Receipt
+    describing whether the target passed contract security, liquidity,
+    reputation, and market structure checks.
+servers:
+  - url: https://REPLACE_WITH_DEPLOYED_BACKEND_URL
+    description: Production (Render)
+  - url: http://localhost:4000
+    description: Local development
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  provider: { type: string, example: ProofDesk }
+                  mode: { type: string, enum: [mock, live] }
+                  persistence: { type: boolean }
+
+  /api/v1/verify:
+    post:
+      summary: Verify a blockchain target and receive a Verification Receipt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyRequest"
+      responses:
+        "200":
+          description: Verification Receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationReceipt"
+        "400":
+          description: Invalid request
+        "500":
+          description: Verification failed unexpectedly
+
+  /api/v1/receipts/{receiptId}:
+    get:
+      summary: Look up a previously issued receipt (requires MongoDB persistence)
+      parameters:
+        - in: path
+          name: receiptId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: The stored receipt
+        "404":
+          description: Receipt not found
+        "501":
+          description: Persistence not enabled on this deployment
+
+  /mcp/tools:
+    get:
+      summary: MCP-style tool discovery
+      responses:
+        "200":
+          description: List of tools this ASP exposes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tools:
+                    type: array
+                    items: { type: object }
+
+  /mcp/invoke:
+    post:
+      summary: MCP-style tool invocation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tool: { type: string, example: proofdesk_verify_target }
+                input:
+                  $ref: "#/components/schemas/VerifyRequest"
+      responses:
+        "200":
+          description: Tool output (a Verification Receipt wrapped in an envelope)
+
+  /asp-manifest.json:
+    get:
+      summary: Machine-readable ASP manifest for agent/registry discovery
+      responses:
+        "200":
+          description: ASP manifest JSON
+
+components:
+  schemas:
+    VerifyRequest:
+      type: object
+      required: [target_address, chain_id]
+      properties:
+        target_address:
+          type: string
+          example: "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"
+        chain_id:
+          type: integer
+          example: 1
+        transaction_payload:
+          type: string
+          nullable: true
+
+    CheckSummary:
+      type: object
+      properties:
+        status: { type: string, enum: [PASS, FAIL, WARNING] }
+        details:
+          type: array
+          items: { type: string }
+
+    VerificationReceipt:
+      type: object
+      properties:
+        provider: { type: string, example: ProofDesk }
+        receipt_id: { type: string, example: pd_3f2a9e1c-... }
+        timestamp: { type: string, format: date-time }
+        target_address: { type: string }
+        chain_id: { type: integer }
+        verdict: { type: string, enum: [PASS, FAIL, WARNING] }
+        confidence_score: { type: number, format: float, minimum: 0, maximum: 1 }
+        checks:
+          type: object
+          properties:
+            contract_security: { $ref: "#/components/schemas/CheckSummary" }
+            liquidity: { $ref: "#/components/schemas/CheckSummary" }
+            reputation: { $ref: "#/components/schemas/CheckSummary" }
+            market_structure: { $ref: "#/components/schemas/CheckSummary" }
+        receipt_hash: { type: string }
+        mode: { type: string, enum: [mock, live, mixed] }

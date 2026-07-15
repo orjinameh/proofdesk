@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "ProofDesk API",
+    "description": "ProofDesk - Trust verification service (OKX.AI Agent Service Provider) for autonomous AI agents.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:4000" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/health"
+      }
+    },
+    {
+      "name": "Verify Target (REST)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/v1/verify",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"target_address\": \"0x1f9840a85d5af5bf1d1762f925bdaddc4201f984\",\n  \"chain_id\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Verify Target with Payload",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/v1/verify",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"target_address\": \"0x1f9840a85d5af5bf1d1762f925bdaddc4201f984\",\n  \"chain_id\": 1,\n  \"transaction_payload\": \"0xa9059cbb...\"\n}"
+        }
+      }
+    },
+    {
+      "name": "MCP - List Tools",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/mcp/tools"
+      }
+    },
+    {
+      "name": "MCP - Invoke proofdesk_verify_target",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/mcp/invoke",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tool\": \"proofdesk_verify_target\",\n  \"input\": {\n    \"target_address\": \"0x1f9840a85d5af5bf1d1762f925bdaddc4201f984\",\n    \"chain_id\": 1\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "ASP Manifest",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/asp-manifest.json"
+      }
+    },
+    {
+      "name": "Get Receipt By ID",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/api/v1/receipts/pd_REPLACE_WITH_RECEIPT_ID"
+      }
+    },
+    {
+      "name": "Verify - Invalid Address (400 example)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/v1/verify",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"target_address\": \"not-an-address\",\n  \"chain_id\": 1\n}"
+        }
+      }
+    }
+  ]
+}
