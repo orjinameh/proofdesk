@@ -8,10 +8,10 @@
   "provider": {
     "name": "ProofDesk",
     "contact": "proofdeskasp@gmail.com",
-    "homepage": "REPLACE_WITH_DEPLOYED_URL"
+    "homepage": "https://proofdesk-cme9.onrender.com"
   },
   "service": {
-    "base_url": "REPLACE_WITH_DEPLOYED_BACKEND_URL",
+    "base_url": "https://proofdesk-cme9.onrender.com",
     "health_check": "/health",
     "rest_endpoint": "/api/v1/verify",
     "mcp_discovery_endpoint": "/mcp/tools",
